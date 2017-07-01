@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CAutoRegisterFactoryDemo", "CAutoRegisterFactoryDemo.vcxproj", "{BF1E2AF1-D1B7-4C5E-9D4C-711D3D40F21E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BF1E2AF1-D1B7-4C5E-9D4C-711D3D40F21E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BF1E2AF1-D1B7-4C5E-9D4C-711D3D40F21E}.Debug|Win32.Build.0 = Debug|Win32
+		{BF1E2AF1-D1B7-4C5E-9D4C-711D3D40F21E}.Release|Win32.ActiveCfg = Release|Win32
+		{BF1E2AF1-D1B7-4C5E-9D4C-711D3D40F21E}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
