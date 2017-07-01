@@ -44,7 +44,7 @@ public:
 
 /**
 * @class CSigleRegisterFactory
-* @brief 一个支持自动注册的工厂类模板
+* @brief 一个支持自动注册的工厂类模板(键值对关系：一对一)
 * @note
 * 注意，如果TKey是自定义数据类型，那么请重载其关系运算符哦，
 * 具体看std::map的条件，通常仅需要重载运算符“<”，详情请看
@@ -167,7 +167,7 @@ private:
 
 /**
 * @class CMutipleRegisterFactory
-* @brief 一个支持自动注册的工厂类模板
+* @brief 一个支持自动注册的工厂类模板(键值对关系：一对多)
 * @note
 * 注意，如果TKey是自定义数据类型，那么请重载其关系运算符哦，
 * 具体看std::map的条件，通常仅需要重载运算符“<”，详情请看
