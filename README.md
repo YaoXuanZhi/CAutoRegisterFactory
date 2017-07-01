@@ -42,13 +42,13 @@ public:
 由于在工厂类模板的实际应用之中，键值对(**Key --> Value(s)**) 的关系，通常存在一对一、一对多的情况，因此，分别为其实现一个用于实际管理的工厂类，`CSingleRegisteredFactory`和`CMutipleRegisterFactory`(PS：其实可以省略`CSingleRegisteredFactory`的，将其整合到`CMutipleRegisterFactory`也是很容易的，不过为了方便区分两种键值对的关系，才区分实现)。
 
 #### Demo说明
- - Demo1.cpp：此Demo演示了如何用CSingleRegisteredFactory类模板来快速实现一个类似控件注册机制的工厂类，类似的应用场景还有图片编/解码器、支持多种文件编码的文本解析器等等
- - Demo2.cpp：此Demo演示了如何实现一个一对一关系的信号槽类库，具体代码参考了SOUI的事件订阅机制的源码。
+ - Demo1.cpp：此Demo演示了如何用`CSingleRegisteredFactory`类模板来快速实现一个类似控件注册机制的工厂类，类似的应用场景还有图片编/解码器、支持多种文件编码的文本解析器等等
+ - Demo2.cpp：此Demo演示了如何用`CSingleRegisteredFactory`类模板实现一个一对一关系的信号槽类库，具体代码参考了SOUI的事件订阅机制的源码。
  
-- Demo3.cpp：此Demo演示了如何实现一个一对多关系的信号槽类库，具体实现还参考了`sigslot.h`，其实，原本本人并不打算实现这么一个类库，但是`sigslot.h`类库在实际调用的时候，实现slot的类必须继承自has_slots<>，这样显得不够解耦O(∩_∩)O哈哈~， 后来本人在阅读SOUI的事件机制的源码时，惊为天人，毕竟其类信号槽的实现方式比`sigslot.h`优雅多啦，而且解耦也彻底，因此借鉴了这个思路撸了一个信号槽类库。
+- Demo3.cpp：此Demo演示了如何用`CMutipleRegisterFactory`类模板实现一个一对多关系的信号槽类库，具体实现还参考了`sigslot.h`，其实，原本本人并不打算实现这么一个类库，但是`sigslot.h`类库在实际调用的时候，实现slot的类必须继承自has_slots<>，这样显得不够解耦，或者按照逼乎里面的说法，不够优雅O(∩_∩)O哈哈~， 后来本人在阅读SOUI的事件机制的源码时，惊为天人，毕竟其类信号槽的实现方式比`sigslot.h`优雅多啦，而且解耦彻底，因此借鉴了这个思路撸了一个信号槽类库。
 
 #### 拓展知识
  - 关于`sigslot.h`的源码分析，请查阅[《Sigslot介绍》](http://www.cnblogs.com/kanego/articles/sigslot.html)
- - 本人在编写信号槽类库的时候，用到了递归宏技术，具体借鉴了[《代码自动生成-宏递归思想》](http://www.cppblog.com/kevinlynx/archive/2008/08/20/59451.html)，通过递归宏的方式简化了节省了几百行代码，真是太爽啦(/▽╲)。
+ - 本人在编写信号槽类库的时候，用到了递归宏技术，具体借鉴了[《代码自动生成-宏递归思想》](http://www.cppblog.com/kevinlynx/archive/2008/08/20/59451.html)，利用递归宏的技术节省了几百行代码，真是太爽啦(/▽╲)。
 
-最后，在此也顺带回答一下`《Sigslot介绍》`里专门提到了一个使用`sigslot`时的注意事项----`slot的类用来关联信号的成员函数（其实就是槽函数）的返回值必须为void类型`，为什么呢？众所周知，既然可以让槽函数的参数列表都用模板来代替，那么返回值自然也是可以的，但问题是，如果返回值不指定为void，那么同样用`template<typename ReturnType>`来代替的时候，那么sigslot在调用类似InvokeFunction()函数的时候，如何处理其返回值呢，默认为int或bool，这些做法其实都不好，因此才直接指定返回值类型为void。
+最后，在此也顺带回答一下`《Sigslot介绍》`里专门提到了一个使用`sigslot`时的注意事项----`slot的类用来关联信号的成员函数（其实就是槽函数）的返回值必须为void类型`，为什么呢？众所周知，既然可以让槽函数的参数列表都用模板来代替，那么返回值自然也是可以的，技术上的难点是并不存在的，但问题是，如果返回值不指定为`void`，那么同样用`template<typename ReturnType>`来代替返回值类型的时候，那么`sigslot`在调用类似`InvokeFunction()`函数的时候，如何处理其返回值呢，比如默认为int或bool，在`InvokeFunction()`函数体内return false或0？这些做法其实都不好，因此才直接指定返回值类型为`void`，这样就不需要揪心了。当然，其实这个类库还是不够完善的，还需要像`sigslot.h`那样为此类库的线程安全做更多的工作呢，比如增加互斥锁等等。
