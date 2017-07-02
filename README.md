@@ -42,10 +42,10 @@ public:
 由于在工厂类模板的实际应用之中，键值对(**Key --> Value(s)**) 的关系，通常存在一对一、一对多的情况，因此，分别为其实现一个用于实际管理的工厂类，`CSingleRegisteredFactory`和`CMutipleRegisterFactory`(PS：其实可以省略`CSingleRegisteredFactory`的，将其整合到`CMutipleRegisterFactory`也是很容易的，不过为了方便区分两种键值对的关系，才区分实现)。
 
 #### Demo说明
- - Demo1.cpp：此Demo演示了如何用`CSingleRegisteredFactory`类模板来快速实现一个类似控件注册机制的工厂类，类似的应用场景还有图片编/解码器、支持多种文件编码的文本解析器等等
- - Demo2.cpp：此Demo演示了如何用`CSingleRegisteredFactory`类模板实现一个一对一关系的信号槽类库，具体代码参考了SOUI的事件订阅机制的源码。
+ - [Demo1.cpp](https://github.com/YaoXuanZhi/CAutoRegisterFactory/blob/master/Demo1.cpp)：此Demo演示了如何用`CSingleRegisteredFactory`类模板来快速实现一个类似控件注册机制的工厂类，类似的应用场景还有图片编/解码器、支持多种文件编码的文本解析器等等
+ - [Demo2.cpp](https://github.com/YaoXuanZhi/CAutoRegisterFactory/blob/master/Demo2.cpp)：此Demo演示了如何用`CSingleRegisteredFactory`类模板实现一个一对一关系的信号槽类库，具体代码参考了SOUI的事件订阅机制的源码。
  
-- Demo3.cpp：此Demo演示了如何用`CMutipleRegisterFactory`类模板实现一个一对多关系的信号槽类库，具体实现还参考了`sigslot.h`，其实，原本本人并不打算实现这么一个类库，但是`sigslot.h`类库在实际调用的时候，实现slot的类必须继承自has_slots<>，这样显得不够解耦，或者按照逼乎里面的说法，不够优雅O(∩_∩)O哈哈~， 后来本人在阅读SOUI的事件机制的源码时，惊为天人，毕竟其类信号槽的实现方式比`sigslot.h`优雅多啦，而且解耦彻底，因此借鉴了这个思路撸了一个信号槽类库。
+- [Demo3.cpp](https://github.com/YaoXuanZhi/CAutoRegisterFactory/blob/master/Demo3.cpp)：此Demo演示了如何用`CMutipleRegisterFactory`类模板实现一个一对多关系的信号槽类库，具体实现还参考了`sigslot.h`，其实，原本本人并不打算实现这么一个类库，但是`sigslot.h`类库在实际调用的时候，实现slot的类必须继承自has_slots<>，这样显得不够解耦，或者按照逼乎里面的说法，不够优雅O(∩_∩)O哈哈~， 后来本人在阅读SOUI的事件机制的源码时，惊为天人，毕竟其类信号槽的实现方式比`sigslot.h`优雅多啦，而且解耦彻底，因此借鉴了这个思路撸了一个信号槽类库。
 
 #### 拓展知识
  - 关于`sigslot.h`的源码分析，请查阅[《Sigslot介绍》](http://www.cnblogs.com/kanego/articles/sigslot.html)
