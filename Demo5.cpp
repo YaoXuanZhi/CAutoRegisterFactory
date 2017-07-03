@@ -332,71 +332,149 @@ namespace simsigslot
 	DEF_SLOTFUNCTOR(CSignalslot,6)
 	DEF_SLOTFUNCTOR(CSignalslot,7)
 	DEF_SLOTFUNCTOR(CSignalslot,8)
-}
-
-using namespace simsigslot;
-
-void OnEvent_Create(char* szMsg)
-{
-	printf("在%s函数内，消息：%s\n", /*__FUNCTION__*/"OnEvent_Create", szMsg);
-}
-
-enum
-{
-	EVT_CREATE = 0,
-	EF_PAINT,
-	EF_CLICK,
-	EVT_TEST,
 };
 
-void OnEvent_Test(int nEventID, char* szEventMsg)
+
+namespace SampleCode1
 {
-	printf("nEventID:%d	消息：%s\n",nEventID,szEventMsg);
-}
+	using namespace simsigslot;
 
-class CTest2
+	void OnEvent_Create(char* szMsg)
+	{
+		printf("在%s函数内，消息：%s\n", /*__FUNCTION__*/"OnEvent_Create", szMsg);
+	}
+
+	enum
+	{
+		EVT_CREATE = 0,
+		EF_PAINT,
+		EF_CLICK,
+		EVT_TEST,
+	};
+
+	void OnEvent_Test(int nEventID, char* szEventMsg)
+	{
+		printf("nEventID:%d	消息：%s\n",nEventID,szEventMsg);
+	}
+
+	class CTest2
+	{
+	private:
+		CSignalslot1<int> m_EvtAction;
+		CSignalslot1<char*> m_EvtUI;
+		CSignalslot2<int,char*> m_evtTest;
+
+	protected:
+		static void OnEvent_Click(int nTimes)
+		{
+			printf("在%s函数内，连击了%d次\n", /*__FUNCTION__*/"OnEvent_Click", nTimes);
+		}
+
+		void OnEvent_Click2(char* szMsg)
+		{
+			printf("在%s函数内，显示信息为:%s\n", /*__FUNCTION__*/"OnEvent_Click2", szMsg);
+
+
+			m_evtTest.emit(47987,"m_evtTest.emit：在OnEvent_Click2函数体呢\n");
+			//两者等价
+			m_evtTest(47987,"m_evtTest：在OnEvent_Click2函数体呢\n");//通过重载caozuofu()来实现，在函数体内调用emit
+		}
+
+	public:
+		CTest2()
+		{
+			m_EvtAction.connectex(&CTest2::OnEvent_Click);
+			m_EvtUI.connectex(this,&CTest2::OnEvent_Click2);
+			m_EvtUI.disconnectex(this,&CTest2::OnEvent_Click2);
+			m_EvtUI.connectex(this,&CTest2::OnEvent_Click2);
+			//m_EvtAction.disconnectex(&CTest2::OnEvent_Click);
+			m_evtTest.connectex(OnEvent_Test);
+		}
+
+		void PrintText()
+		{
+			m_EvtAction.emit(5);
+			m_EvtUI.emit("嘿，现在在CTest2之中调用哦");
+		}
+
+		CSignalslot1<char*>& GetEventSetUI()
+		{
+			return m_EvtUI;
+		}
+
+	};
+
+
+	class CTest3
+	{
+	public:
+		void OnEvt_OK(char *szMsg)
+		{
+			printf("此函数在CTest3类内，位于OnEvt_OK，传入的信息为：“%s”\n",szMsg);
+		}
+	};
+
+	void main1()
+	{
+
+		CTest2 obj2;
+		CTest3 obj3;
+		obj2.GetEventSetUI().connectex(&obj3,&CTest3::OnEvt_OK);
+
+		obj2.PrintText();
+		getchar();
+	}
+};
+
+#include "sigslot.h"
+#include <iostream>
+namespace SampleCode2
 {
-private:
-	CSignalslot1<int> m_EvtAction;
-	CSignalslot1<char*> m_EvtUI;
-	CSignalslot2<int,char*> m_evtTest;
-
-protected:
-	static void OnEvent_Click(int nTimes)
+	using namespace std;
+	using namespace sigslot;
+	class CSwitch
 	{
-		printf("在%s函数内，连击了%d次\n", /*__FUNCTION__*/"OnEvent_Click", nTimes);
-	}
+	public:
+		signal0<> Clicked;//这是一个信号
+		signal1<int>Clicked1;
+	};
 
-	void OnEvent_Click2(char* szMsg)
+	class CLight :public has_slots<>
 	{
-		printf("在%s函数内，显示信息为:%s\n", /*__FUNCTION__*/"OnEvent_Click2", szMsg);
+	public:
+		CLight(bool state){b_state = state;Displaystate();}
+		void ToggleState(){b_state = !b_state;Displaystate();} //作为消息的响应
+		void TurnOn(){b_state = TRUE;Displaystate();}
+		void TurnOff(){b_state = FALSE;Displaystate();}
+		void Displaystate(){cout<<"The state is "<<b_state<<endl;}
+	private:
+		bool b_state;
+	};
 
-
-		m_evtTest.emit(47987,"m_evtTest.emit：在OnEvent_Click2函数体呢\n");
-		//两者等价
-		m_evtTest(47987,"m_evtTest：在OnEvent_Click2函数体呢\n");//通过重载caozuofu()来实现，在函数体内调用emit
-	}
-
-public:
-	CTest2()
+	void main2()
 	{
-		m_EvtAction.connectex(&CTest2::OnEvent_Click);
-		m_EvtUI.connectex(this,&CTest2::OnEvent_Click2);
-		m_EvtUI.disconnectex(this,&CTest2::OnEvent_Click2);
-		m_EvtUI.connectex(this,&CTest2::OnEvent_Click2);
-		//m_EvtAction.disconnectex(&CTest2::OnEvent_Click);
-		m_evtTest.connectex(OnEvent_Test);
-	}
+		CSwitch sw1, sw2,all_on,all_off;
+		CLight lp1(TRUE), lp2(FALSE);
+		sw1.Clicked.connect(&lp1,&CLight::ToggleState); //绑定
+		sw2.Clicked.connect(&lp2,&CLight::ToggleState);
+		all_on.Clicked.connect(&lp1,&CLight::TurnOn);
+		all_on.Clicked.connect(&lp2,&CLight::TurnOn);
+		all_off.Clicked.connect(&lp1,&CLight::TurnOff);
+		all_off.Clicked.connect(&lp2,&CLight::TurnOff);
 
-	void PrintText()
-	{
-		m_EvtAction.emit(5);
-		m_EvtUI.emit("嘿，现在在CTest2之中调用哦");
-	}
+		sw1.Clicked();
+		sw2.Clicked();
+		all_on.Clicked();
+		all_off.Clicked();
+		sw1.Clicked1(5987);
 
-	CSignalslot1<char*>& GetEventSetUI()
-	{
-		return m_EvtUI;
+		sw1.Clicked.disconnect(&lp1);
+		sw2.Clicked.disconnect(&lp2);
+		all_on.Clicked.disconnect(&lp1);
+		all_on.Clicked.disconnect(&lp2);
+		all_off.Clicked.disconnect(&lp1);
+		all_off.Clicked.disconnect(&lp2);
+		getchar();
 	}
 
 };
@@ -418,24 +496,9 @@ void EnableMemLeakCheck()
 	_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_LEAK_CHECK_DF);
 }
 
-class CTest3
-{
-public:
-	void OnEvt_OK(char *szMsg)
-	{
-		printf("此函数在CTest3类内，位于OnEvt_OK，传入的信息为：“%s”\n",szMsg);
-	}
-};
-
 void main()
 {
 	EnableMemLeakCheck();
-
-	CTest2 obj2;
-	CTest3 obj3;
-	obj2.GetEventSetUI().connectex(&obj3,&CTest3::OnEvt_OK);
-
-	obj2.PrintText();
-	getchar();
+	SampleCode1::main1();
+	SampleCode2::main2();
 }
-
