@@ -101,244 +101,243 @@ enum {
 //////////////////////////////////////公共代码//////////////////////////////////////
 
 /////////////////////////////////////实现建立一个独立的事件订阅类库/////////////////////////////////////
-//#define DEF_SLOTFUNCTOR(classname,n)																	
-																										
-template</*PARAM_DEF(n)*/typename ParamType1st>																					
-class ISlotFunctionr/*##n*/																					
-{																										
-public:																									
-	virtual ~ISlotFunctionr/*##n*/() {}																		
-	virtual void InvokeFunction(/*REAL_DEFEX(n)*/ParamType1st) = 0;														
-	virtual ISlotFunctionr/*##n*/* Clone() const = 0;														
-	virtual bool Equal(const ISlotFunctionr/*##n*/ & sour)const = 0;										
-	virtual int GetFunctionrType() const { return EM_FUNC_UNKNOWN; }									
-};																										
-																										
-template</*PARAM_DEF(n)*/typename ParamType1st>																					
-class NormalFunctionr/*##n*/ :public ISlotFunctionr/*##n*/</*REAL_DEFEX(n)*/ParamType1st>										
-{																										
-	typedef ISlotFunctionr/*##n*/</*REAL_DEFEX(n)*/ParamType1st> TSlotFunc;													
-	typedef void(pSlotFunction)(/*REAL_DEFEX(n)*/ParamType1st);															
-																										
-public:																									
-	NormalFunctionr/*##n*/(pSlotFunction* pNormalFunc)														
-		:m_pNormalFunc(pNormalFunc)																		
-	{																									
-		assert((pNormalFunc, "pNormalFunc指针为NULL！！！"));											
-	}																									
-																										
-	virtual ~NormalFunctionr/*##n*/() {}																	
-																										
-	void InvokeFunction(/*PARAM_DEFEX(n)*/ParamType1st value1st)																	
-	{																									
-		assert((m_pNormalFunc, "m_pNormalFunc指针为NULL！！！"));										
-		m_pNormalFunc(/*REAL_DEF(n)*/value1st);																		
-	}																									
-																										
-	TSlotFunc* Clone() const																			
-	{																									
-		return new NormalFunctionr/*##n*/(m_pNormalFunc);													
-	}																									
-																										
-	int GetFunctionrType() const { return EM_FUNC_NORMAL; }												
-																										
-	virtual bool Equal(const TSlotFunc & sour) const													
-	{																									
-		if (sour.GetFunctionrType() != EM_FUNC_NORMAL) return false;									
-		const NormalFunctionr/*##n*/ *psour = static_cast<const NormalFunctionr/*##n*/*>(&sour);				
-		assert(psour);																					
-		return psour->m_pNormalFunc == m_pNormalFunc;													
-	}																									
-																										
-private:																								
-	pSlotFunction *m_pNormalFunc;	/**< 普通函数指针 */												
-};																										
-																										
-template</*PARAM_DEF(n)*/typename ParamType1st>																					
-NormalFunctionr/*##n*/</*REAL_DEFEX(n)*/ParamType1st> Subscriber(void(*pNormalFunc)(/*REAL_DEFEX(n)*/ParamType1st value1st))							
-{																										
-	return NormalFunctionr/*##n*/</*REAL_DEFEX(n)*/ParamType1st>(pNormalFunc);												
-}																										
-																										
-template<typename TClass, /*PARAM_DEF(n)*/typename ParamType1st>																	
-class MemberFunctionr/*##n*/ :public ISlotFunctionr/*##n*/</*REAL_DEFEX(n)*/ParamType1st>										
-{																										
-	typedef ISlotFunctionr/*##n*/</*REAL_DEFEX(n)*/ParamType1st> TSlotFunc;													
-	typedef void(TClass::*pSlotFunction)(/*REAL_DEFEX(n)*/ParamType1st);												
-																										
-public:																									
-	MemberFunctionr/*##n*/(TClass *pClassInst, pSlotFunction pMemberFunc)									
-		:m_pClassInst(pClassInst),m_pMemberFunc(pMemberFunc)											
-	{																									
-		assert((pClassInst, "pClassInst指针为NULL！！！"));											    
-		assert((pMemberFunc, "pMemberFunc指针为NULL！！！"));											
-	}																									
-																										
-	virtual ~MemberFunctionr/*##n*/() {}																	
-																										
-	void InvokeFunction(/*PARAM_DEFEX(n)*/ParamType1st value1st)																	
-	{																									
-		assert((m_pClassInst, "m_pClassInst指针为NULL！！！"));										    
-		assert((m_pMemberFunc, "m_pMemberFunc指针为NULL！！！"));										
-		(m_pClassInst->*m_pMemberFunc)(/*REAL_DEF(n)*/value1st);													
-	}																									
-																										
-	TSlotFunc* Clone() const																			
-	{																									
-		return new MemberFunctionr/*##n*/(m_pClassInst, m_pMemberFunc);										
-	}																									
-																										
-	int GetFunctionrType() const { return EM_FUNC_MEMBER; }												
-																										
-	virtual bool Equal(const TSlotFunc & sour) const													
-	{																									
-		if (sour.GetFunctionrType() != EM_FUNC_MEMBER) return false;									
-		const MemberFunctionr/*##n*/ *psour = static_cast<const MemberFunctionr/*##n*/*>(&sour);				
-		assert(psour);																					
-		return psour->m_pMemberFunc == m_pMemberFunc;													
-	}																									
-																										
-private:																								
-	pSlotFunction m_pMemberFunc;	/**< 类的成员函数指针 */											
-	TClass *m_pClassInst;			/**< 类实例的指针 */												
-};																										
-																										
-template<typename TClass, /*PARAM_DEF(n)*/typename ParamType1st>																	
-MemberFunctionr/*##n*/<TClass, /*REAL_DEFEX(n)*/ParamType1st> Subscriber(TClass *pClassInst,								
-													void(TClass::*pNormalFunc)(/*REAL_DEFEX(n)*/ParamType1st))			
-{																										
-	return MemberFunctionr/*##n*/<TClass, /*REAL_DEFEX(n)*/ParamType1st>(pClassInst, pNormalFunc);							
-}																										
-																										
-template<typename TKEY, /*PARAM_DEF(n)*/typename ParamType1st>																	
-class CSignalslot1
-	//class classname##n																					    
-{																										
-	typedef ISlotFunctionr/*##n*/</*REAL_DEFEX(n)*/ParamType1st> TSlotFunc;													
-	typedef IForwarder<TSlotFunc> ImpForwarder;
-																										
-public:																									
-	~CSignalslot1()
-	{
-		std::list<ImpForwarder*>::iterator it = m_listSenders.begin();
-		for(;it!=m_listSenders.end();it++)
-		{
-			ImpForwarder* pItem = *it;
-			delete pItem;
-			pItem = NULL;
-		}
-	}
+#define DEF_SLOTFUNCTOR(classname,n)																		  \
+																											  \
+template<PARAM_DEF(n)>																						  \
+class ISlotFunctionr##n																						  \
+{																											  \
+public:																										  \
+	virtual ~ISlotFunctionr##n() {}																			  \
+	virtual void InvokeFunction(REAL_DEFEX(n)) = 0;															  \
+	virtual ISlotFunctionr##n* Clone() const = 0;															  \
+	virtual bool Equal(const ISlotFunctionr##n & sour)const = 0;											  \
+	virtual int GetFunctionrType() const { return EM_FUNC_UNKNOWN; }										  \
+};																											  \
+																											  \
+template<PARAM_DEF(n)>																						  \
+class NormalFunctionr##n :public ISlotFunctionr##n<REAL_DEFEX(n)>											  \
+{																											  \
+	typedef ISlotFunctionr##n<REAL_DEFEX(n)> TSlotFunc;														  \
+	typedef void(pSlotFunction)(REAL_DEFEX(n));																  \
+																											  \
+public:																										  \
+	NormalFunctionr##n(pSlotFunction* pNormalFunc)															  \
+		:m_pNormalFunc(pNormalFunc)																			  \
+	{																										  \
+		assert((pNormalFunc, "pNormalFunc指针为NULL！！！"));												  \
+	}																										  \
+																											  \
+	virtual ~NormalFunctionr##n() {}																		  \
+																											  \
+	void InvokeFunction(PARAM_DEFEX(n) )																	  \
+	{																										  \
+		assert((m_pNormalFunc, "m_pNormalFunc指针为NULL！！！"));											  \
+		m_pNormalFunc(REAL_DEF(n));																			  \
+	}																										  \
+																											  \
+	TSlotFunc* Clone() const																				  \
+	{																										  \
+		return new NormalFunctionr##n(m_pNormalFunc);														  \
+	}																										  \
+																											  \
+	int GetFunctionrType() const { return EM_FUNC_NORMAL; }													  \
+																											  \
+	virtual bool Equal(const TSlotFunc & sour) const														  \
+	{																										  \
+		if (sour.GetFunctionrType() != EM_FUNC_NORMAL) return false;										  \
+		const NormalFunctionr##n *psour = static_cast<const NormalFunctionr##n*>(&sour);					  \
+		assert(psour);																						  \
+		return psour->m_pNormalFunc == m_pNormalFunc;														  \
+	}																										  \
+																											  \
+private:																									  \
+	pSlotFunction *m_pNormalFunc;	/**< 普通函数指针 */													  \
+};																											  \
+																											  \
+template<PARAM_DEF(n)>																						  \
+NormalFunctionr##n<REAL_DEFEX(n)> Subscriber(void(*pNormalFunc)(REAL_DEFEX(n) ))							  \
+{																											  \
+	return NormalFunctionr##n<REAL_DEFEX(n)>(pNormalFunc);													  \
+}																											  \
+																											  \
+template<typename TClass, PARAM_DEF(n)>																		  \
+class MemberFunctionr##n :public ISlotFunctionr##n<REAL_DEFEX(n)>											  \
+{																											  \
+	typedef ISlotFunctionr##n<REAL_DEFEX(n)> TSlotFunc;														  \
+	typedef void(TClass::*pSlotFunction)(REAL_DEFEX(n));													  \
+																											  \
+public:																										  \
+	MemberFunctionr##n(TClass *pClassInst, pSlotFunction pMemberFunc)										  \
+		:m_pClassInst(pClassInst),m_pMemberFunc(pMemberFunc)												  \
+	{																										  \
+		assert((pClassInst, "pClassInst指针为NULL！！！"));											    	  \
+		assert((pMemberFunc, "pMemberFunc指针为NULL！！！"));												  \
+	}																										  \
+																											  \
+	virtual ~MemberFunctionr##n() {}																		  \
+																											  \
+	void InvokeFunction(PARAM_DEFEX(n) )																	  \
+	{																										  \
+		assert((m_pClassInst, "m_pClassInst指针为NULL！！！"));										    	  \
+		assert((m_pMemberFunc, "m_pMemberFunc指针为NULL！！！"));											  \
+		(m_pClassInst->*m_pMemberFunc)(REAL_DEF(n));														  \
+	}																										  \
+																											  \
+	TSlotFunc* Clone() const																				  \
+	{																										  \
+		return new MemberFunctionr##n(m_pClassInst, m_pMemberFunc);											  \
+	}																										  \
+																											  \
+	int GetFunctionrType() const { return EM_FUNC_MEMBER; }													  \
+																											  \
+	virtual bool Equal(const TSlotFunc & sour) const														  \
+	{																										  \
+		if (sour.GetFunctionrType() != EM_FUNC_MEMBER) return false;										  \
+		const MemberFunctionr##n *psour = static_cast<const MemberFunctionr##n*>(&sour);					  \
+		assert(psour);																						  \
+		return psour->m_pMemberFunc == m_pMemberFunc;														  \
+	}																										  \
+																											  \
+private:																									  \
+	pSlotFunction m_pMemberFunc;	/**< 类的成员函数指针 */												  \
+	TClass *m_pClassInst;			/**< 类实例的指针 */													  \
+};																											  \
+																											  \
+template<typename TClass, PARAM_DEF(n)>																		  \
+MemberFunctionr##n<TClass, REAL_DEFEX(n)> Subscriber(TClass *pClassInst,									  \
+													void(TClass::*pNormalFunc)(REAL_DEFEX(n)))				  \
+{																											  \
+	return MemberFunctionr##n<TClass, REAL_DEFEX(n)>(pClassInst, pNormalFunc);								  \
+}																											  \
+																											  \
+template<typename TKEY, PARAM_DEF(n)>																		  \
+class classname##n																					    	  \
+{																											  \
+	typedef ISlotFunctionr##n<REAL_DEFEX(n)> TSlotFunc;														  \
+	typedef IForwarder<TSlotFunc> ImpForwarder;																  \
+																											  \
+public:																										  \
+	~classname##n()																							  \
+	{																										  \
+		std::list<ImpForwarder*>::iterator it = m_listSenders.begin();										  \
+		for(;it!=m_listSenders.end();it++)																	  \
+		{																									  \
+			ImpForwarder* pItem = *it;																		  \
+			delete pItem;																					  \
+			pItem = NULL;																					  \
+		}																									  \
+	}																										  \
+																											  \
+	template<PARAM_DEF(n)>																					  \
+	void connectex(void(*pNormalFunc)(REAL_DEFEX(n) ))														  \
+	{																										  \
+		connect(NormalFunctionr##n<REAL_DEFEX(n)>(pNormalFunc));											  \
+	}																										  \
+																											  \
+	template<typename TClass, PARAM_DEF(n)>																	  \
+	void connectex(TClass *pClassInst,																		  \
+		void(TClass::*pNormalFunc)(REAL_DEFEX(n)))															  \
+	{																										  \
+		connect(MemberFunctionr##n<TClass, REAL_DEFEX(n)>(pClassInst, pNormalFunc));						  \
+	}																										  \
+																											  \
+	template<PARAM_DEF(n)>																					  \
+	void disconnectex(void(*pNormalFunc)(REAL_DEFEX(n) ))													  \
+	{																										  \
+		disconnect(NormalFunctionr##n<REAL_DEFEX(n)>(pNormalFunc));											  \
+	}																										  \
+																											  \
+	template<typename TClass, PARAM_DEF(n)>																	  \
+	void disconnectex(TClass *pClassInst,																	  \
+		void(TClass::*pNormalFunc)(REAL_DEFEX(n)))															  \
+	{																										  \
+		disconnect(MemberFunctionr##n<TClass, REAL_DEFEX(n)>(pClassInst, pNormalFunc));						  \
+	}																										  \
+																											  \
+	void emit(PARAM_DEFEX(n) )																				  \
+	{																										  \
+		std::list<ImpForwarder*>::iterator it = m_listSenders.begin();										  \
+		for(;it!=m_listSenders.end();it++)																	  \
+		{																									  \
+			ImpForwarder* pItem = *it;																		  \
+			pItem->InvokeClass()->InvokeFunction(REAL_DEF(n));												  \
+		}																									  \
+	}																										  \
+																											  \
+protected:																									  \
+	/* 链接对应的信号槽 */																					  \
+	void connect(const TSlotFunc &subscriber)																  \
+	{																										  \
+		ImpForwarder* pObj= new TplForwarderForSigslot<TSlotFunc>(subscriber);								  \
+		std::list<ImpForwarder*>::iterator itResult = GetIterator(pObj); 									  \
+		if(m_listSenders.end() == itResult)																	  \
+		{																									  \
+			ImpForwarder* pObj= new TplForwarderForSigslot<TSlotFunc>(subscriber);							  \
+			m_listSenders.push_back(pObj);																	  \
+		}																									  \
+																											  \
+		if(NULL!=pObj)																						  \
+		{																									  \
+			delete pObj;																					  \
+			pObj = NULL;																					  \
+		}																									  \
+	}																										  \
+																											  \
+	/* 断开信号槽之间的链接 */																				  \
+	void disconnect(const TSlotFunc &subscriber)															  \
+	{																										  \
+		ImpForwarder* pObj= new TplForwarderForSigslot<TSlotFunc>(subscriber);								  \
+		std::list<ImpForwarder*>::iterator itResult = GetIterator(pObj); 									  \
+		if(m_listSenders.end()!= itResult)																	  \
+		{																									  \
+			ImpForwarder *p = *itResult;																	  \
+			delete p;																						  \
+			p = NULL;																						  \
+			/* 删除std::list()里面的元素 */																	  \
+			itResult = m_listSenders.erase(itResult);														  \
+		}																									  \
+																											  \
+		if(NULL!=pObj)																						  \
+		{																									  \
+			delete pObj;																					  \
+			pObj = NULL;																					  \
+		}																									  \
+	}																										  \
+																											  \
+	/*判断当前槽函数是否已被注册*/													    					  \
+	typename std::list<ImpForwarder*>::iterator GetIterator(ImpForwarder* pObj)								  \
+	{																										  \
+		std::list<ImpForwarder*>::iterator itResult = m_listSenders.end();									  \
+																											  \
+		if(NULL == pObj)																					  \
+			return itResult;																				  \
+																											  \
+		std::list<ImpForwarder*>::iterator it = m_listSenders.begin();										  \
+		for(;it!=m_listSenders.end();it++)																	  \
+		{																									  \
+			ImpForwarder* pItem = *it;																		  \
+																											  \
+			/* 判断这两者的指针对应的实例信息是否相同 */													  \
+			if( pItem->InvokeClass()->Equal(*pObj->InvokeClass()))											  \
+			{																								  \
+				itResult = it;																				  \
+				break;																						  \
+			}																								  \
+		}																									  \
+		return itResult;																					  \
+	}																										  \
+																											  \
+private:																									  \
+	std::list<ImpForwarder*> m_listSenders;   /**< 此信号对应的发送者列表 */								  \
+};																											  \
 
-	template</*PARAM_DEF(n)*/typename ParamType1st>																					
-	void connectex(void(*pNormalFunc)(/*REAL_DEFEX(n)*/ParamType1st value1st))											
-	{
-		connect(NormalFunctionr/*##n*/</*REAL_DEFEX(n)*/ParamType1st>(pNormalFunc));
-	}
-
-	template<typename TClass, /*PARAM_DEF(n)*/typename ParamType1st>																	
-	void connectex(TClass *pClassInst,								
-		void(TClass::*pNormalFunc)(/*REAL_DEFEX(n)*/ParamType1st))											
-	{
-		connect(MemberFunctionr/*##n*/<TClass, /*REAL_DEFEX(n)*/ParamType1st>(pClassInst, pNormalFunc));
-	}	
-
-	template</*PARAM_DEF(n)*/typename ParamType1st>																					
-	void disconnectex(void(*pNormalFunc)(/*REAL_DEFEX(n)*/ParamType1st value1st))											
-	{
-		disconnect(NormalFunctionr/*##n*/</*REAL_DEFEX(n)*/ParamType1st>(pNormalFunc));
-	}
-
-	template<typename TClass, /*PARAM_DEF(n)*/typename ParamType1st>																	
-	void disconnectex(TClass *pClassInst,								
-		void(TClass::*pNormalFunc)(/*REAL_DEFEX(n)*/ParamType1st))											
-	{
-		disconnect(MemberFunctionr/*##n*/<TClass, /*REAL_DEFEX(n)*/ParamType1st>(pClassInst, pNormalFunc));
-	}	
-																										
-	void emit(/*PARAM_DEFEX(n)*/ParamType1st value1st)															
-	{																									
-		std::list<ImpForwarder*>::iterator it = m_listSenders.begin();
-		for(;it!=m_listSenders.end();it++)
-		{
-			ImpForwarder* pItem = *it;
-			pItem->InvokeClass()->InvokeFunction(value1st);
-		}
-	}
-
-protected:
-	/* 链接对应的信号槽 */
-	void connect(const TSlotFunc &subscriber)											
-	{						
-		ImpForwarder* pObj= new TplForwarderForSigslot<TSlotFunc>(subscriber);
-		std::list<ImpForwarder*>::iterator itResult = GetIterator(pObj); 
-		if(m_listSenders.end() == itResult)
-		{
-			ImpForwarder* pObj= new TplForwarderForSigslot<TSlotFunc>(subscriber);
-			m_listSenders.push_back(pObj);
-		}
-
-		if(NULL!=pObj)
-		{
-			delete pObj;
-			pObj = NULL;
-		}
-	}
-
-	/* 断开信号槽之间的链接 */
-	void disconnect(const TSlotFunc &subscriber)											
-	{																									
-		ImpForwarder* pObj= new TplForwarderForSigslot<TSlotFunc>(subscriber);
-		std::list<ImpForwarder*>::iterator itResult = GetIterator(pObj); 
-		if(m_listSenders.end()!= itResult)
-		{
-			ImpForwarder *p = *itResult;
-			delete p;
-			p = NULL;
-			//删除std::list()里面的元素
-			itResult = m_listSenders.erase(itResult);
-		}
-
-		if(NULL!=pObj)
-		{
-			delete pObj;
-			pObj = NULL;
-		}
-	}	
-
-	/*判断当前槽函数是否已被注册*/													    
-	typename std::list<ImpForwarder*>::iterator GetIterator(/*const TSlotFunc &subscriber*/ImpForwarder* pObj)
-	{
-		std::list<ImpForwarder*>::iterator itResult = m_listSenders.end();
-
-		if(NULL == pObj)
-			return itResult;
-
-		std::list<ImpForwarder*>::iterator it = m_listSenders.begin();
-		for(;it!=m_listSenders.end();it++)
-		{
-			ImpForwarder* pItem = *it;
-
-			//判断这两者的指针对应的实例信息是否相同
-			if( pItem->InvokeClass()->Equal(*pObj->InvokeClass()))
-			{
-				itResult = it;
-				break;
-			}
-		}
-		return itResult;
-	}
-																										
-private:	
-	std::list<ImpForwarder*> m_listSenders;   /**< 此信号对应的发送者列表 */
-};			
-
-//DEF_SLOTFUNCTOR(CSignalslot,1)
-//DEF_SLOTFUNCTOR(CSignalslot,2)
-//DEF_SLOTFUNCTOR(CSignalslot,3)
-//DEF_SLOTFUNCTOR(CSignalslot,5)
-//DEF_SLOTFUNCTOR(CSignalslot,6)
-//DEF_SLOTFUNCTOR(CSignalslot,7)
-//DEF_SLOTFUNCTOR(CSignalslot,8)
+DEF_SLOTFUNCTOR(CSignalslot,1)
+DEF_SLOTFUNCTOR(CSignalslot,2)
+DEF_SLOTFUNCTOR(CSignalslot,3)
+DEF_SLOTFUNCTOR(CSignalslot,5)
+DEF_SLOTFUNCTOR(CSignalslot,6)
+DEF_SLOTFUNCTOR(CSignalslot,7)
+DEF_SLOTFUNCTOR(CSignalslot,8)
 
 /*
 事件订阅类库的使用套路：
@@ -389,7 +388,7 @@ public:
 		m_EvtAction.connectex(&CTest2::OnEvent_Click);
 		m_EvtUI.connectex(this,&CTest2::OnEvent_Click2);
 		m_EvtUI.disconnectex(this,&CTest2::OnEvent_Click2);
-		m_EvtAction.disconnectex(&CTest2::OnEvent_Click);
+		//m_EvtAction.disconnectex(&CTest2::OnEvent_Click);
 	}
 
 	void PrintText()
