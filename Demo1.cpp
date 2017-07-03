@@ -62,7 +62,7 @@ public:
 	virtual TBase* InvokeClass() { return &m_Obj; }
 };
 
-#pragma region 原生模式
+#pragma region SourceMode
 void main1st()
 {
 	CSingleRegisteredFactory<tstring, IObject> tempfactory;
@@ -77,7 +77,7 @@ void main1st()
 }
 #pragma endregion
 
-#pragma region 包装模式
+#pragma region Wrapper
 class CIObjectFactory
 {
 public:
@@ -87,6 +87,17 @@ public:
 			return;
 		m_IObjectFactory.RegisterFactory(pObj->InvokeClass()->GetName(), pObj, bIsOverWrite);
 	}
+
+	///////////////////注意，以下语句在VC 6.0下并不支持这种语句的解析哦///////////////////
+	template<class SubClass>
+	void RegisterIObjectEx(bool bIsOverWrite = false)
+	{
+		IForwarder<IObject> *pObj = TplClassOfIObject<SubClass>();
+		if (NULL == pObj)
+			return;
+		m_IObjectFactory.RegisterFactory(pObj->InvokeClass()->GetName(), pObj, bIsOverWrite);
+	}
+	///////////////////注意，以上语句在VC 6.0下并不支持这种语句的解析哦///////////////////
 
 	void UnregisterIObject(tstring szName) { m_IObjectFactory.UnregisterFactory(szName); }
 
@@ -118,6 +129,11 @@ void main2nd()
 	CIObjectFactory tempfactory;
 	tempfactory.RegisterIObject(TplClassOfIObject<IObject1st>());
 	tempfactory.RegisterIObject(TplClassOfIObject<IObject2nd>());
+
+	//注意，在VC 6.0下并不支持这种语句的解析哦
+	//tempfactory.RegisterIObjectEx<IObject1st>();
+	//tempfactory.RegisterIObjectEx<IObject2nd>();
+
 	IObject *pTemp = tempfactory.InvokeIObject(_T("IObject1st"));
 	if (NULL != pTemp)
 	{
@@ -149,6 +165,7 @@ void main()
 	EnableMemLeakCheck();
 	main1st();
 	main2nd();
+	getchar();
 }
 
 /*
