@@ -104,30 +104,30 @@ enum {
 #define DEF_SLOTFUNCTOR(classname,n)																		  \
 																											  \
 template<PARAM_DEF(n)>																						  \
-class ISlotFunctionr##n																						  \
+class __ISlotFunctionr##n																					  \
 {																											  \
 public:																										  \
-	virtual ~ISlotFunctionr##n() {}																			  \
+	virtual ~__ISlotFunctionr##n() {}																		  \
 	virtual void InvokeFunction(REAL_DEFEX(n)) = 0;															  \
-	virtual ISlotFunctionr##n* Clone() const = 0;															  \
-	virtual bool Equal(const ISlotFunctionr##n & sour)const = 0;											  \
+	virtual __ISlotFunctionr##n* Clone() const = 0;															  \
+	virtual bool Equal(const __ISlotFunctionr##n & sour)const = 0;											  \
 	virtual int GetFunctionrType() const { return EM_FUNC_UNKNOWN; }										  \
 };																											  \
 																											  \
 template<PARAM_DEF(n)>																						  \
-class NormalFunctionr##n :public ISlotFunctionr##n<REAL_DEFEX(n)>											  \
+class __NormalFunctionr##n :public __ISlotFunctionr##n<REAL_DEFEX(n)>										  \
 {																											  \
-	typedef ISlotFunctionr##n<REAL_DEFEX(n)> TSlotFunc;														  \
+	typedef __ISlotFunctionr##n<REAL_DEFEX(n)> TSlotFunc;													  \
 	typedef void(pSlotFunction)(REAL_DEFEX(n));																  \
 																											  \
 public:																										  \
-	NormalFunctionr##n(pSlotFunction* pNormalFunc)															  \
+	__NormalFunctionr##n(pSlotFunction* pNormalFunc)														  \
 		:m_pNormalFunc(pNormalFunc)																			  \
 	{																										  \
 		assert((pNormalFunc, "pNormalFunc指针为NULL！！！"));												  \
 	}																										  \
 																											  \
-	virtual ~NormalFunctionr##n() {}																		  \
+	virtual ~__NormalFunctionr##n() {}																		  \
 																											  \
 	void InvokeFunction(PARAM_DEFEX(n) )																	  \
 	{																										  \
@@ -137,7 +137,7 @@ public:																										  \
 																											  \
 	TSlotFunc* Clone() const																				  \
 	{																										  \
-		return new NormalFunctionr##n(m_pNormalFunc);														  \
+		return new __NormalFunctionr##n(m_pNormalFunc);														  \
 	}																										  \
 																											  \
 	int GetFunctionrType() const { return EM_FUNC_NORMAL; }													  \
@@ -145,7 +145,7 @@ public:																										  \
 	virtual bool Equal(const TSlotFunc & sour) const														  \
 	{																										  \
 		if (sour.GetFunctionrType() != EM_FUNC_NORMAL) return false;										  \
-		const NormalFunctionr##n *psour = static_cast<const NormalFunctionr##n*>(&sour);					  \
+		const __NormalFunctionr##n *psour = static_cast<const __NormalFunctionr##n*>(&sour);				  \
 		assert(psour);																						  \
 		return psour->m_pNormalFunc == m_pNormalFunc;														  \
 	}																										  \
@@ -155,20 +155,20 @@ private:																									  \
 };																											  \
 																											  \
 template<typename TClass, PARAM_DEF(n)>																		  \
-class MemberFunctionr##n :public ISlotFunctionr##n<REAL_DEFEX(n)>											  \
+class __MemberFunctionr##n :public __ISlotFunctionr##n<REAL_DEFEX(n)>										  \
 {																											  \
-	typedef ISlotFunctionr##n<REAL_DEFEX(n)> TSlotFunc;														  \
+	typedef __ISlotFunctionr##n<REAL_DEFEX(n)> TSlotFunc;													  \
 	typedef void(TClass::*pSlotFunction)(REAL_DEFEX(n));													  \
 																											  \
 public:																										  \
-	MemberFunctionr##n(TClass *pClassInst, pSlotFunction pMemberFunc)										  \
+	__MemberFunctionr##n(TClass *pClassInst, pSlotFunction pMemberFunc)										  \
 		:m_pClassInst(pClassInst),m_pMemberFunc(pMemberFunc)												  \
 	{																										  \
 		assert((pClassInst, "pClassInst指针为NULL！！！"));											    	  \
 		assert((pMemberFunc, "pMemberFunc指针为NULL！！！"));												  \
 	}																										  \
 																											  \
-	virtual ~MemberFunctionr##n() {}																		  \
+	virtual ~__MemberFunctionr##n() {}																		  \
 																											  \
 	void InvokeFunction(PARAM_DEFEX(n) )																	  \
 	{																										  \
@@ -179,7 +179,7 @@ public:																										  \
 																											  \
 	TSlotFunc* Clone() const																				  \
 	{																										  \
-		return new MemberFunctionr##n(m_pClassInst, m_pMemberFunc);											  \
+		return new __MemberFunctionr##n(m_pClassInst, m_pMemberFunc);										  \
 	}																										  \
 																											  \
 	int GetFunctionrType() const { return EM_FUNC_MEMBER; }													  \
@@ -187,7 +187,7 @@ public:																										  \
 	virtual bool Equal(const TSlotFunc & sour) const														  \
 	{																										  \
 		if (sour.GetFunctionrType() != EM_FUNC_MEMBER) return false;										  \
-		const MemberFunctionr##n *psour = static_cast<const MemberFunctionr##n*>(&sour);					  \
+		const __MemberFunctionr##n *psour = static_cast<const __MemberFunctionr##n*>(&sour);				  \
 		assert(psour);																						  \
 		return psour->m_pMemberFunc == m_pMemberFunc;														  \
 	}																										  \
@@ -197,10 +197,10 @@ private:																									  \
 	TClass *m_pClassInst;			/**< 类实例的指针 */													  \
 };																											  \
 																											  \
-template<typename TKEY, PARAM_DEF(n)>																		  \
+template<PARAM_DEF(n)>																						  \
 class classname##n																					    	  \
 {																											  \
-	typedef ISlotFunctionr##n<REAL_DEFEX(n)> TSlotFunc;														  \
+	typedef __ISlotFunctionr##n<REAL_DEFEX(n)> TSlotFunc;													  \
 	typedef IForwarder<TSlotFunc> ImpForwarder;																  \
 																											  \
 public:																										  \
@@ -218,27 +218,27 @@ public:																										  \
 	template<PARAM_DEF(n)>																					  \
 	void connectex(void(*pNormalFunc)(REAL_DEFEX(n) ))														  \
 	{																										  \
-		connect(NormalFunctionr##n<REAL_DEFEX(n)>(pNormalFunc));											  \
+		connect(__NormalFunctionr##n<REAL_DEFEX(n)>(pNormalFunc));											  \
 	}																										  \
 																											  \
 	template<typename TClass, PARAM_DEF(n)>																	  \
 	void connectex(TClass *pClassInst,																		  \
 		void(TClass::*pNormalFunc)(REAL_DEFEX(n)))															  \
 	{																										  \
-		connect(MemberFunctionr##n<TClass, REAL_DEFEX(n)>(pClassInst, pNormalFunc));						  \
+		connect(__MemberFunctionr##n<TClass, REAL_DEFEX(n)>(pClassInst, pNormalFunc));						  \
 	}																										  \
 																											  \
 	template<PARAM_DEF(n)>																					  \
 	void disconnectex(void(*pNormalFunc)(REAL_DEFEX(n) ))													  \
 	{																										  \
-		disconnect(NormalFunctionr##n<REAL_DEFEX(n)>(pNormalFunc));											  \
+		disconnect(__NormalFunctionr##n<REAL_DEFEX(n)>(pNormalFunc));										  \
 	}																										  \
 																											  \
 	template<typename TClass, PARAM_DEF(n)>																	  \
 	void disconnectex(TClass *pClassInst,																	  \
 		void(TClass::*pNormalFunc)(REAL_DEFEX(n)))															  \
 	{																										  \
-		disconnect(MemberFunctionr##n<TClass, REAL_DEFEX(n)>(pClassInst, pNormalFunc));						  \
+		disconnect(__MemberFunctionr##n<TClass, REAL_DEFEX(n)>(pClassInst, pNormalFunc));					  \
 	}																										  \
 																											  \
 	void emit(PARAM_DEFEX(n) )																				  \
@@ -251,7 +251,7 @@ public:																										  \
 		}																									  \
 	}																										  \
 																											  \
-protected:																									  \
+private:																									  \
 	/* 链接对应的信号槽 */																					  \
 	void connect(const TSlotFunc &subscriber)																  \
 	{																										  \
@@ -352,11 +352,17 @@ enum
 	EVT_TEST,
 };
 
+void OnEvent_Test(int nEventID, char* szEventMsg)
+{
+	printf("nEventID:%d	消息：%s\n",nEventID,szEventMsg);
+}
+
 class CTest2
 {
 private:
-	CSignalslot1<UINT,int> m_EvtAction;
-	CSignalslot1<UINT,char*> m_EvtUI;
+	CSignalslot1<int> m_EvtAction;
+	CSignalslot1<char*> m_EvtUI;
+	CSignalslot2<int,char*> m_evtTest;
 
 protected:
 	static void OnEvent_Click(int nTimes)
@@ -367,6 +373,8 @@ protected:
 	void OnEvent_Click2(char* szMsg)
 	{
 		printf("在%s函数内，显示信息为:%s\n", /*__FUNCTION__*/"OnEvent_Click2", szMsg);
+
+		m_evtTest.emit(47987,"在OnEvent_Click2函数体呢\n");
 	}
 
 public:
@@ -377,6 +385,7 @@ public:
 		m_EvtUI.disconnectex(this,&CTest2::OnEvent_Click2);
 		m_EvtUI.connectex(this,&CTest2::OnEvent_Click2);
 		//m_EvtAction.disconnectex(&CTest2::OnEvent_Click);
+		m_evtTest.connectex(OnEvent_Test);
 	}
 
 	void PrintText()
@@ -385,7 +394,7 @@ public:
 		m_EvtUI.emit("嘿，现在在CTest2之中调用哦");
 	}
 
-	CSignalslot1<UINT, char*>& GetEventSetUI()
+	CSignalslot1<char*>& GetEventSetUI()
 	{
 		return m_EvtUI;
 	}
@@ -410,11 +419,23 @@ void EnableMemLeakCheck()
 	_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_LEAK_CHECK_DF);
 }
 
+class CTest3
+{
+public:
+	void OnEvt_OK(char *szMsg)
+	{
+		printf("此函数在CTest3类内，位于OnEvt_OK，传入的信息为：“%s”\n",szMsg);
+	}
+};
+
 void main()
 {
 	EnableMemLeakCheck();
 
 	CTest2 obj2;
+	CTest3 obj3;
+	obj2.GetEventSetUI().connectex(&obj3,&CTest3::OnEvt_OK);
+
 	obj2.PrintText();
 	getchar();
 }
