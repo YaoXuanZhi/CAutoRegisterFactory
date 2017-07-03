@@ -94,8 +94,8 @@ public:
 /** @brief 信号槽类型 */
 enum {
 	EM_FUNC_UNKNOWN,   /**< 未知函数类型 */
-	EM_FUNC_NORMAL,	/**< 普通函数类型 */
-	EM_FUNC_MEMBER,	/**< 成员函数类型 */
+	EM_FUNC_NORMAL,	   /**< 普通函数类型 */
+	EM_FUNC_MEMBER,	   /**< 成员函数类型 */
 };
 
 //////////////////////////////////////公共代码//////////////////////////////////////
@@ -154,12 +154,6 @@ private:																									  \
 	pSlotFunction *m_pNormalFunc;	/**< 普通函数指针 */													  \
 };																											  \
 																											  \
-template<PARAM_DEF(n)>																						  \
-NormalFunctionr##n<REAL_DEFEX(n)> Subscriber(void(*pNormalFunc)(REAL_DEFEX(n) ))							  \
-{																											  \
-	return NormalFunctionr##n<REAL_DEFEX(n)>(pNormalFunc);													  \
-}																											  \
-																											  \
 template<typename TClass, PARAM_DEF(n)>																		  \
 class MemberFunctionr##n :public ISlotFunctionr##n<REAL_DEFEX(n)>											  \
 {																											  \
@@ -202,13 +196,6 @@ private:																									  \
 	pSlotFunction m_pMemberFunc;	/**< 类的成员函数指针 */												  \
 	TClass *m_pClassInst;			/**< 类实例的指针 */													  \
 };																											  \
-																											  \
-template<typename TClass, PARAM_DEF(n)>																		  \
-MemberFunctionr##n<TClass, REAL_DEFEX(n)> Subscriber(TClass *pClassInst,									  \
-													void(TClass::*pNormalFunc)(REAL_DEFEX(n)))				  \
-{																											  \
-	return MemberFunctionr##n<TClass, REAL_DEFEX(n)>(pClassInst, pNormalFunc);								  \
-}																											  \
 																											  \
 template<typename TKEY, PARAM_DEF(n)>																		  \
 class classname##n																					    	  \
@@ -388,6 +375,7 @@ public:
 		m_EvtAction.connectex(&CTest2::OnEvent_Click);
 		m_EvtUI.connectex(this,&CTest2::OnEvent_Click2);
 		m_EvtUI.disconnectex(this,&CTest2::OnEvent_Click2);
+		m_EvtUI.connectex(this,&CTest2::OnEvent_Click2);
 		//m_EvtAction.disconnectex(&CTest2::OnEvent_Click);
 	}
 
