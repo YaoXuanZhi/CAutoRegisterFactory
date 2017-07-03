@@ -241,7 +241,12 @@ public:																										  \
 		disconnect(__MemberFunctionr##n<TClass, REAL_DEFEX(n)>(pClassInst, pNormalFunc));					  \
 	}																										  \
 																											  \
-	void emit(PARAM_DEFEX(n) )																				  \
+	void operator()(PARAM_DEFEX(n))																		      \
+	{																										  \
+		emit(REAL_DEF(n));																					  \
+	}    																									  \
+																											  \
+	void emit(PARAM_DEFEX(n))																				  \
 	{																										  \
 		std::list<ImpForwarder*>::iterator it = m_listSenders.begin();										  \
 		for(;it!=m_listSenders.end();it++)																	  \
@@ -374,7 +379,10 @@ protected:
 	{
 		printf("在%s函数内，显示信息为:%s\n", /*__FUNCTION__*/"OnEvent_Click2", szMsg);
 
-		m_evtTest.emit(47987,"在OnEvent_Click2函数体呢\n");
+
+		m_evtTest.emit(47987,"m_evtTest.emit：在OnEvent_Click2函数体呢\n");
+		//两者等价
+		m_evtTest(47987,"m_evtTest：在OnEvent_Click2函数体呢\n");//通过重载caozuofu()来实现，在函数体内调用emit
 	}
 
 public:
