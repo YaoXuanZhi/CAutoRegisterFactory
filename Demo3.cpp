@@ -273,7 +273,7 @@ EventID --> SignalID
 
 void OnEvent_Create(char* szMsg)
 {
-	printf("在%s函数内，消息：%s\n", __FUNCTION__, szMsg);
+	printf("在%s函数内，消息：%s\n", "OnEvent_Create", szMsg);
 }
 
 enum
@@ -289,8 +289,8 @@ class CTest1
 public:
 	CTest1()
 	{
-		m_EvtUI.SubscribeEvent(EVT_CREATE, Subscriber(this, &CTest1::OnEvent_Paint));
-		m_EvtUI.SubscribeEvent(EF_PAINT, Subscriber(OnEvent_Create));
+		m_EvtUI.SubscribeEvent(EF_PAINT, Subscriber(this, &CTest1::OnEvent_Paint));
+		m_EvtUI.SubscribeEvent(EVT_CREATE, Subscriber(OnEvent_Create));
 
 #if (_MSC_VER == 1200)
 		m_EvtTest.SubscribeEvent(EVT_TEST,Subscriber(&CTest1::OnEventTest));//VC 6.0仅仅支持这种类的静态成员函数指针的写法
@@ -323,7 +323,7 @@ private:
 public:
 	void OnEvent_Paint(char* szMsg)
 	{
-		printf("在%s函数内，消息：%s\n", __FUNCTION__,szMsg);
+		printf("在%s函数内，消息：%s\n", "OnEvent_Paint",szMsg);
 	}
 
 
@@ -342,13 +342,17 @@ private:
 protected:
 	static void OnEvent_Click(int nTimes)
 	{
-		printf("在%s函数内，连击了%d次\n", __FUNCTION__, nTimes);
+		printf("在%s函数内，连击了%d次\n", "OnEvent_Click", nTimes);
 	}
 
 public:
 	CTest2()
 	{
+#if (_MSC_VER == 1200)
+		m_EvtAction.SubscribeEvent(EF_CLICK, Subscriber(&CTest2::OnEvent_Click));
+#else
 		m_EvtAction.SubscribeEvent(EF_CLICK, Subscriber(OnEvent_Click));
+#endif
 	}
 
 	void PrintText()

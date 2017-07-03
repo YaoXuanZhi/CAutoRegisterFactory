@@ -205,7 +205,7 @@ private:
 
 bool OnEvent_Create(char* szMsg)
 {
-	printf("在%s函数内，消息：%s\n", __FUNCTION__, szMsg);
+	printf("在%s函数内，消息：%s\n", "OnEvent_Create", szMsg);
 	return false;
 }
 
@@ -221,8 +221,8 @@ class CTest1
 public:
 	CTest1()
 	{
-		m_EvtUI.GetEventSet()->SubscribeEvent(EVT_CREATE, Subscriber(this, &CTest1::OnEvent_Paint));
-		m_EvtUI.GetEventSet()->SubscribeEvent(EF_PAINT, Subscriber(OnEvent_Create));
+		m_EvtUI.GetEventSet()->SubscribeEvent(EF_PAINT, Subscriber(this, &CTest1::OnEvent_Paint));
+		m_EvtUI.GetEventSet()->SubscribeEvent(EVT_CREATE, Subscriber(OnEvent_Create));
 	}
 
 	void OnCreate()
@@ -241,7 +241,7 @@ private:
 public:
 	bool OnEvent_Paint(char* szMsg)
 	{
-		printf("在%s函数内，消息：%s\n", __FUNCTION__,szMsg);
+		printf("在%s函数内，消息：%s\n", "OnEvent_Paint",szMsg);
 		return false;
 	}
 };
@@ -255,14 +255,14 @@ private:
 protected:
 	static bool OnEvent_Click(int nTimes)
 	{
-		printf("在%s函数内，连击了%d次\n", __FUNCTION__, nTimes);
+		printf("在%s函数内，连击了%d次\n", "OnEvent_Click", nTimes);
 		return false;
 	}
 
 public:
 	CTest2()
 	{
-		m_EvtAction.GetEventSet()->SubscribeEvent(EF_CLICK, Subscriber(OnEvent_Click));
+		m_EvtAction.GetEventSet()->SubscribeEvent(EF_CLICK, Subscriber(&CTest2::OnEvent_Click));
 	}
 
 	void PrintText()
