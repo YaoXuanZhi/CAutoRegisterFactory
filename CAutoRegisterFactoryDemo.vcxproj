@@ -74,7 +74,7 @@
     <ClInclude Include="CAutoRegisterFactory.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Demo1.cpp" />
+    <ClCompile Include="Demo4.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
