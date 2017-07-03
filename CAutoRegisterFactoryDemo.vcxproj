@@ -72,9 +72,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CAutoRegisterFactory.h" />
+    <ClInclude Include="sigslot.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Demo4.cpp" />
+    <ClCompile Include="Demo5.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

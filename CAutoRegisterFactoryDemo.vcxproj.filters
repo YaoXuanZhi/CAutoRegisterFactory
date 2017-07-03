@@ -18,9 +18,12 @@
     <ClInclude Include="CAutoRegisterFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="sigslot.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Demo4.cpp">
+    <ClCompile Include="Demo5.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
