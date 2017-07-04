@@ -75,7 +75,7 @@
     <ClInclude Include="sigslot.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Demo5.cpp" />
+    <ClCompile Include="Demo6.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
