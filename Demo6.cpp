@@ -65,34 +65,7 @@ namespace simsigslot
 	#define REAL_DEFEX( n ) REPEAT_/*##n*/( n, REAL_ARRARYEX, REAL_ARGEX )
 	///////////////////////////////////////递归宏的实现///////////////////////////////////////
 	
-	//////////////////////////////////////公共代码//////////////////////////////////////
-	template<typename TBase>
-	class TplForwarderForSigslot :public IForwarder<TBase>
-	{
-	private:
-		TBase* m_Obj;
-	
-	public:
-		TplForwarderForSigslot(const TBase &Obj)
-		{
-			m_Obj = Obj.Clone();
-		}
-	
-		virtual ~TplForwarderForSigslot()
-		{
-			if (NULL != m_Obj)
-			{
-				delete m_Obj;
-				m_Obj = NULL;
-			}
-		}
-	
-	public:
-		virtual TBase* CloneClass() { return m_Obj->Clone(); }
-		virtual TBase* InvokeClass() { return m_Obj; }
-	
-	};
-	
+	//////////////////////////////////////公共代码//////////////////////////////////////	
 	/** @brief 信号槽类型 */
 	enum {
 		EM_FUNC_UNKNOWN,   /**< 未知函数类型 */
