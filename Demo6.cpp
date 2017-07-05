@@ -25,7 +25,7 @@ namespace simsigslot
 	#define DECVALUE_9 8
 	
 	#ifndef DECVALUE
-	#define DECVALUE(n) DECVALUE_/*##n*/
+	#define DECVALUE(n) DECVALUE_##n
 	#else
 	#error "DECVALUE已被定义，请对其重命名"
 	#endif
@@ -48,21 +48,21 @@ namespace simsigslot
 	#define REPEAT_8( n, f, e ) MERGECHAR( MERGECHAR( REPEAT_, DECVALUE( n ) )( DECVALUE( n ), f, e ), f( n ) ) 
 	#define REPEAT_9( n, f, e ) MERGECHAR( MERGECHAR( REPEAT_, DECVALUE( n ) )( DECVALUE( n ), f, e ), f( n ) ) 
 	
-	#define PARAM_ARG(n) typename T/*##n*/
+	#define PARAM_ARG(n) typename T##n
 	#define PARAM_ARRARY(n) ,PARAM_ARG(n)
-	#define PARAM_DEF( n ) REPEAT_/*##n*/( n, PARAM_ARRARY, PARAM_ARG )
+	#define PARAM_DEF( n ) REPEAT_##n( n, PARAM_ARRARY, PARAM_ARG )
 	
-	#define PARAM_ARGEX(n) T/*##n*/ t/*##n*/
+	#define PARAM_ARGEX(n) T##n t##n
 	#define PARAM_ARRARYEX(n) ,PARAM_ARGEX(n)
-	#define PARAM_DEFEX( n ) REPEAT_/*##n*/( n, PARAM_ARRARYEX, PARAM_ARGEX )
+	#define PARAM_DEFEX( n ) REPEAT_##n( n, PARAM_ARRARYEX, PARAM_ARGEX )
 	
-	#define REAL_ARG(n) t/*##n*/
+	#define REAL_ARG(n) t##n
 	#define REAL_ARRARY(n) ,REAL_ARG(n)
-	#define REAL_DEF( n ) REPEAT_/*##n*/( n, REAL_ARRARY, REAL_ARG )
+	#define REAL_DEF( n ) REPEAT_##n( n, REAL_ARRARY, REAL_ARG )
 	
-	#define REAL_ARGEX(n) T/*##n*/
+	#define REAL_ARGEX(n) T##n
 	#define REAL_ARRARYEX(n) ,REAL_ARGEX(n)
-	#define REAL_DEFEX( n ) REPEAT_/*##n*/( n, REAL_ARRARYEX, REAL_ARGEX )
+	#define REAL_DEFEX( n ) REPEAT_##n( n, REAL_ARRARYEX, REAL_ARGEX )
 	///////////////////////////////////////递归宏的实现///////////////////////////////////////
 	
 	//////////////////////////////////////公共代码//////////////////////////////////////	
@@ -76,212 +76,210 @@ namespace simsigslot
 	//////////////////////////////////////公共代码//////////////////////////////////////
 	
 	/////////////////////////////////////实现建立一个独立的事件订阅类库/////////////////////////////////////
-	//#define DEF_SLOTFUNCTOR(classname,n)																		 
-																												 
-	template</*PARAM_DEF(n)*/ typename Param1st>																						 
-	class __ISlotFunctionr/*##n*/																					 
-	{																											 
-	public:																										 
-		virtual ~__ISlotFunctionr/*##n*/() {}																		 
-		virtual void InvokeFunction(/*REAL_DEFEX(n)*/Param1st) = 0;															 
-		virtual __ISlotFunctionr/*##n*/* Clone() const = 0;															 
-		virtual bool Equal(const __ISlotFunctionr/*##n*/ & sour)const = 0;											 
-		virtual int GetFunctionrType() const { return EM_FUNC_UNKNOWN; }										 
-	};																											 
-																												 
-	template</*PARAM_DEF(n)*/ typename Param1st>																						 
-	class __NormalFunctionr/*##n*/ :public __ISlotFunctionr/*##n*/</*REAL_DEFEX(n)*/Param1st>										 
-	{																											 
-		typedef __ISlotFunctionr/*##n*/</*REAL_DEFEX(n)*/Param1st> TSlotFunc;													 
-		typedef void(pSlotFunction)(/*REAL_DEFEX(n)*/Param1st);																 
-																												 
-	public:																										 
-		__NormalFunctionr/*##n*/(pSlotFunction* pNormalFunc)														 
-			:m_pNormalFunc(pNormalFunc)																			 
-		{																										 
-			assert((pNormalFunc, "pNormalFunc指针为NULL！！！"));												 
-		}																										 
-																												 
-		virtual ~__NormalFunctionr/*##n*/() {}																		 
-																												 
-		void InvokeFunction(/*PARAM_DEFEX(n)*/Param1st value1st)																	 
-		{																										 
-			assert((m_pNormalFunc, "m_pNormalFunc指针为NULL！！！"));											 
-			m_pNormalFunc(/*REAL_DEF(n)*/value1st);																			 
-		}																										 
-																												 
-		TSlotFunc* Clone() const																				 
-		{																										 
-			return new __NormalFunctionr/*##n*/(m_pNormalFunc);														 
-		}																										 
-																												 
-		int GetFunctionrType() const { return EM_FUNC_NORMAL; }													 
-																												 
-		virtual bool Equal(const TSlotFunc & sour) const														 
-		{																										 
-			if (sour.GetFunctionrType() != EM_FUNC_NORMAL) return false;										 
-			const __NormalFunctionr/*##n*/ *psour = static_cast<const __NormalFunctionr/*##n*/*>(&sour);				 
-			assert(psour);																						 
-			return psour->m_pNormalFunc == m_pNormalFunc;														 
-		}																										 
-																												 
-	private:																									 
-		pSlotFunction *m_pNormalFunc;	/**< 普通函数指针 */													 
-	};																											 
-																												 
-	template<typename TClass, /*PARAM_DEF(n)*/ typename Param1st>																		 
-	class __MemberFunctionr/*##n*/ :public __ISlotFunctionr/*##n*/</*REAL_DEFEX(n)*/Param1st>										 
-	{																											 
-		typedef __ISlotFunctionr/*##n*/</*REAL_DEFEX(n)*/Param1st> TSlotFunc;													 
-		typedef void(TClass::*pSlotFunction)(/*REAL_DEFEX(n)*/Param1st);													 
-																												 
-	public:																										 
-		__MemberFunctionr/*##n*/(TClass *pClassInst, pSlotFunction pMemberFunc)										 
-			:m_pClassInst(pClassInst),m_pMemberFunc(pMemberFunc)												 
-		{																										 
-			assert((pClassInst, "pClassInst指针为NULL！！！"));											    	 
-			assert((pMemberFunc, "pMemberFunc指针为NULL！！！"));												 
-		}																										 
-																												 
-		virtual ~__MemberFunctionr/*##n*/() {}																		 
-																												 
-		void InvokeFunction(/*PARAM_DEFEX(n)*/Param1st value1st )																	 
-		{																										 
-			assert((m_pClassInst, "m_pClassInst指针为NULL！！！"));										    	 
-			assert((m_pMemberFunc, "m_pMemberFunc指针为NULL！！！"));											 
-			(m_pClassInst->*m_pMemberFunc)(/*REAL_DEF(n)*/value1st);														 
-		}																										 
-																												 
-		TSlotFunc* Clone() const																				 
-		{																										 
-			return new __MemberFunctionr/*##n*/(m_pClassInst, m_pMemberFunc);										 
-		}																										 
-																												 
-		int GetFunctionrType() const { return EM_FUNC_MEMBER; }													 
-																												 
-		virtual bool Equal(const TSlotFunc & sour) const														 
-		{																										 
-			if (sour.GetFunctionrType() != EM_FUNC_MEMBER) return false;										 
-			const __MemberFunctionr/*##n*/ *psour = static_cast<const __MemberFunctionr/*##n*/*>(&sour);				 
-			assert(psour);																						 
-			return psour->m_pMemberFunc == m_pMemberFunc;														 
-		}																										 
-																												 
-	private:																									 
-		pSlotFunction m_pMemberFunc;	/**< 类的成员函数指针 */												 
-		TClass *m_pClassInst;			/**< 类实例的指针 */													 
-	};																											 
-																												 
-	template</*PARAM_DEF(n)*/ typename Param1st>		
-	class CSignalslot1
-	//class classname/*##n*/																					    	 
-	{																											 
-		typedef __ISlotFunctionr/*##n*/</*REAL_DEFEX(n)*/Param1st> TSlotFunc;													 
-		typedef IForwarder<TSlotFunc> ImpForwarder;																 
-																												 
-	public:																										 
-		//~classname/*##n*/()		
-		~CSignalslot1()
-		{		
-			std::list<TSlotFunc*>::iterator it2 = m_listSlots.begin();										 
-			for(;it2!=m_listSlots.end();it2++)																	 
-			{																									 
-				delete (*it2);																					 																				 
-			}	
-
-			m_listSlots.clear();
-		}																										 
-																												 
-		template</*PARAM_DEF(n)*/ typename Param1st>																					 
-		void connectex(void(*pNormalFunc)(/*REAL_DEFEX(n)*/Param1st ))														 
-		{																										 
-			connect(__NormalFunctionr/*##n*/</*REAL_DEFEX(n)*/Param1st>(pNormalFunc));											 
-		}																										 
-																												 
-		template<typename TClass, /*PARAM_DEF(n)*/ typename Param1st>																	 
-		void connectex(TClass *pClassInst,																		 
-			void(TClass::*pNormalFunc)(/*REAL_DEFEX(n)*/Param1st))															 
-		{																										 
-			connect(__MemberFunctionr/*##n*/<TClass, /*REAL_DEFEX(n)*/Param1st>(pClassInst, pNormalFunc));						 
-		}																										 
-																												 
-		template</*PARAM_DEF(n)*/ typename Param1st>																					 
-		void disconnectex(void(*pNormalFunc)(/*REAL_DEFEX(n)*/Param1st ))													 
-		{																										 
-			disconnect(__NormalFunctionr/*##n*/</*REAL_DEFEX(n)*/Param1st>(pNormalFunc));										 
-		}																										 
-																												 
-		template<typename TClass, /*PARAM_DEF(n)*/ typename Param1st>																	 
-		void disconnectex(TClass *pClassInst,																	 
-			void(TClass::*pNormalFunc)(/*REAL_DEFEX(n)*/Param1st))															 
-		{																										 
-			disconnect(__MemberFunctionr/*##n*/<TClass, /*REAL_DEFEX(n)*/Param1st>(pClassInst, pNormalFunc));					 
-		}																										 
-																												 
-		void operator()(/*PARAM_DEFEX(n)*/Param1st value1st)																		     
-		{																										 
-			emit(/*REAL_DEF(n)*/value1st);																					 
-		}    																									 
-																												 
-		void emit(/*PARAM_DEFEX(n)*/Param1st value1st)																				 
-		{																										 
-			typename std::list<TSlotFunc*>::iterator it2 = m_listSlots.begin();										 
-			for(;it2!=m_listSlots.end();it2++)																	 
-			{																									 
-				(*it2)->InvokeFunction(/*REAL_DEF(n)*/value1st);
-			}	
-		}																										 
-																												 
-	private:																									 
-		/* 链接对应的信号槽 */																					 
-		void connect(const TSlotFunc &subscriber)																 
-		{																										 																								 
-			if(findSlotFunctionr(subscriber)==m_listSlots.end())
-			{
-				m_listSlots.push_back(subscriber.Clone());
-			}
-		}																										 
-																												 
-		/* 断开信号槽之间的链接 */																				 
-		void disconnect(const TSlotFunc &subscriber)															 
-		{																										 
-			typename std::list<TSlotFunc*>::iterator itResult2 = findSlotFunctionr(subscriber);  
-			if( m_listSlots.end()!=itResult2)
-			{
-				delete (*itResult2);
-				itResult2 = m_listSlots.erase(itResult2);
-			}
-		}																										 
-																												 
-		/*判断当前槽函数是否已被注册*/		
-		typename std::list<TSlotFunc*>::iterator findSlotFunctionr(const TSlotFunc &subscriber)
-		{																										 
-			typename std::list<TSlotFunc*>::iterator it = m_listSlots.begin();										 
-			for(;it!=m_listSlots.end();it++)																	 
-			{																									 
-				if((*it)->Equal(subscriber))
-				{
-					return it;					
-				}
-			}																									 
-			return m_listSlots.end();																					 
-		}	
-
-	private:																									 
-		std::list<TSlotFunc*> m_listSlots;   /**< 此信号对应的发送者列表 */								 
-	};																											 
+	#define DEF_SLOTFUNCTOR(classname,n)																		  \
+																												  \
+	template<PARAM_DEF(n)>																						  \
+	class __ISlotFunctionr##n																					  \
+	{																											  \
+	public:																										  \
+		virtual ~__ISlotFunctionr##n() {}																		  \
+		virtual void InvokeFunction(REAL_DEFEX(n)) = 0;															  \
+		virtual __ISlotFunctionr##n* Clone() const = 0;															  \
+		virtual bool Equal(const __ISlotFunctionr##n & sour)const = 0;											  \
+		virtual int GetFunctionrType() const { return EM_FUNC_UNKNOWN; }										  \
+	};																											  \
+																												  \
+	template<PARAM_DEF(n)>																						  \
+	class __NormalFunctionr##n :public __ISlotFunctionr##n<REAL_DEFEX(n)>										  \
+	{																											  \
+		typedef __ISlotFunctionr##n<REAL_DEFEX(n)> TSlotFunc;													  \
+		typedef void(pSlotFunction)(REAL_DEFEX(n));																  \
+																												  \
+	public:																										  \
+																												  \
+		__NormalFunctionr##n(pSlotFunction* pNormalFunc)														  \
+			:m_pNormalFunc(pNormalFunc)																			  \
+		{																										  \
+			assert((pNormalFunc, "pNormalFunc指针为NULL！！！"));												  \
+		}																										  \
+																												  \
+		virtual ~__NormalFunctionr##n() {}																		  \
+																												  \
+		void InvokeFunction(PARAM_DEFEX(n))																		  \
+		{																										  \
+			assert((m_pNormalFunc, "m_pNormalFunc指针为NULL！！！"));											  \
+			m_pNormalFunc(REAL_DEF(n));																			  \
+		}																										  \
+																												  \
+		TSlotFunc* Clone() const																				  \
+		{																										  \
+			return new __NormalFunctionr##n(m_pNormalFunc);														  \
+		}																										  \
+																												  \
+		int GetFunctionrType() const { return EM_FUNC_NORMAL; }													  \
+																												  \
+		virtual bool Equal(const TSlotFunc & sour) const														  \
+		{																										  \
+			if (sour.GetFunctionrType() != EM_FUNC_NORMAL) return false;										  \
+			const __NormalFunctionr##n *psour = static_cast<const __NormalFunctionr##n*>(&sour);				  \
+			assert(psour);																						  \
+			return psour->m_pNormalFunc == m_pNormalFunc;														  \
+		}																										  \
+	private:																									  \
+		pSlotFunction *m_pNormalFunc;	/**< 普通函数指针 */													  \
+	};																											  \
+																												  \
+	template<typename TClass, PARAM_DEF(n)>																		  \
+	class __MemberFunctionr##n :public __ISlotFunctionr##n<REAL_DEFEX(n)>										  \
+	{																											  \
+		typedef __ISlotFunctionr##n<REAL_DEFEX(n)> TSlotFunc;													  \
+		typedef void(TClass::*pSlotFunction)(REAL_DEFEX(n));													  \
+																												  \
+	public:																										  \
+																												  \
+		__MemberFunctionr##n(TClass *pClassInst, pSlotFunction pMemberFunc)										  \
+			:m_pClassInst(pClassInst),m_pMemberFunc(pMemberFunc)												  \
+		{																										  \
+			assert((pClassInst, "pClassInst指针为NULL！！！"));													  \
+			assert((pMemberFunc, "pMemberFunc指针为NULL！！！"));												  \
+		}																										  \
+																												  \
+		virtual ~__MemberFunctionr##n() {}																		  \
+																												  \
+		void InvokeFunction(PARAM_DEFEX(n) )																	  \
+		{																										  \
+			assert((m_pClassInst, "m_pClassInst指针为NULL！！！"));												  \
+			assert((m_pMemberFunc, "m_pMemberFunc指针为NULL！！！"));											  \
+			(m_pClassInst->*m_pMemberFunc)(REAL_DEF(n));														  \
+		}																										  \
+																												  \
+		TSlotFunc* Clone() const																				  \
+		{																										  \
+			return new __MemberFunctionr##n(m_pClassInst, m_pMemberFunc);										  \
+		}																										  \
+																												  \
+		int GetFunctionrType() const { return EM_FUNC_MEMBER; }													  \
+																												  \
+		virtual bool Equal(const TSlotFunc & sour) const														  \
+		{																										  \
+			if (sour.GetFunctionrType() != EM_FUNC_MEMBER) return false;										  \
+			const __MemberFunctionr##n *psour = static_cast<const __MemberFunctionr##n*>(&sour);				  \
+			assert(psour);																						  \
+			return psour->m_pMemberFunc == m_pMemberFunc;														  \
+		}																										  \
+																												  \
+	private:																									  \
+		pSlotFunction m_pMemberFunc;	/**< 类的成员函数指针 */												  \
+		TClass *m_pClassInst;			/**< 类实例的指针 */													  \
+	};																											  \
+																												  \
+	template<PARAM_DEF(n)>																						  \
+	class classname##n																							  \
+	{																											  \
+		typedef __ISlotFunctionr##n<REAL_DEFEX(n)> TSlotFunc;													  \
+																												  \
+	public:																										  \
+																												  \
+		~classname##n()																							  \
+		{																										  \
+			std::list<TSlotFunc*>::iterator it2 = m_listSlots.begin();											  \
+			for(;it2!=m_listSlots.end();it2++)																	  \
+			{																									  \
+				delete (*it2);																					  \
+			}																									  \
+			m_listSlots.clear();																				  \
+		}																										  \
+																												  \
+		template<PARAM_DEF(n)>																					  \
+		void connectex(void(*pNormalFunc)(REAL_DEFEX(n) ))														  \
+		{																										  \
+			connect(__NormalFunctionr##n<REAL_DEFEX(n)>(pNormalFunc));											  \
+		}																										  \
+																												  \
+		template<typename TClass, PARAM_DEF(n)>																	  \
+		void connectex(TClass *pClassInst,																		  \
+			void(TClass::*pNormalFunc)(REAL_DEFEX(n)))															  \
+		{																										  \
+			connect(__MemberFunctionr##n<TClass, REAL_DEFEX(n)>(pClassInst, pNormalFunc));						  \
+		}																										  \
+																												  \
+		template<PARAM_DEF(n)>																					  \
+		void disconnectex(void(*pNormalFunc)(REAL_DEFEX(n) ))													  \
+		{																										  \
+			disconnect(__NormalFunctionr##n<REAL_DEFEX(n)>(pNormalFunc));										  \
+		}																										  \
+																												  \
+		template<typename TClass, PARAM_DEF(n)>																	  \
+		void disconnectex(TClass *pClassInst,																	  \
+			void(TClass::*pNormalFunc)(REAL_DEFEX(n)))															  \
+		{																										  \
+			disconnect(__MemberFunctionr##n<TClass, REAL_DEFEX(n)>(pClassInst, pNormalFunc));					  \
+		}																										  \
+																												  \
+		void operator()(PARAM_DEFEX(n))																			  \
+		{																										  \
+			emit(REAL_DEF(n));																					  \
+		}																										  \
+																												  \
+		void emit(PARAM_DEFEX(n))																				  \
+		{																										  \
+			typename std::list<TSlotFunc*>::iterator it2 = m_listSlots.begin();									  \
+			for(;it2!=m_listSlots.end();it2++)																	  \
+			{																									  \
+				(*it2)->InvokeFunction(REAL_DEF(n));															  \
+			}																									  \
+		}																										  \
+																												  \
+	private:																									  \
+																												  \
+		/* 链接对应的信号槽 */																					  \
+		void connect(const TSlotFunc &subscriber)																  \
+		{																										  \
+			if(findSlotFunctionr(subscriber)==m_listSlots.end())												  \
+			{																									  \
+				m_listSlots.push_back(subscriber.Clone());														  \
+			}																									  \
+		}																										  \
+																												  \
+		/* 断开信号槽之间的链接 */																				  \
+		void disconnect(const TSlotFunc &subscriber)															  \
+		{																										  \
+			typename std::list<TSlotFunc*>::iterator itResult2 = findSlotFunctionr(subscriber);					  \
+			if( m_listSlots.end()!=itResult2)																	  \
+			{																									  \
+				delete (*itResult2);																			  \
+				itResult2 = m_listSlots.erase(itResult2);														  \
+			}																									  \
+		}																										  \
+																												  \
+		/*判断当前槽函数是否已被注册*/																			  \
+		typename std::list<TSlotFunc*>::iterator findSlotFunctionr(const TSlotFunc &subscriber)					  \
+		{																										  \
+			typename std::list<TSlotFunc*>::iterator it = m_listSlots.begin();									  \
+			for(;it!=m_listSlots.end();it++)																	  \
+			{																									  \
+				if((*it)->Equal(subscriber))																	  \
+				{																								  \
+					return it;																					  \
+				}																								  \
+			}																									  \
+			return m_listSlots.end();																			  \
+		}																										  \
+																												  \
+	private:																									  \
+		std::list<TSlotFunc*> m_listSlots;   /**< 此信号对应的发送者列表 */									      \
+	};																										 	  \
 	
-	//DEF_SLOTFUNCTOR(CSignalslot,1)
-	//DEF_SLOTFUNCTOR(CSignalslot,2)
-	//DEF_SLOTFUNCTOR(CSignalslot,3)
-	//DEF_SLOTFUNCTOR(CSignalslot,5)
-	//DEF_SLOTFUNCTOR(CSignalslot,6)
-	//DEF_SLOTFUNCTOR(CSignalslot,7)
-	//DEF_SLOTFUNCTOR(CSignalslot,8)
+	DEF_SLOTFUNCTOR(CSignalslot,1)
+	DEF_SLOTFUNCTOR(CSignalslot,2)
+	DEF_SLOTFUNCTOR(CSignalslot,3)
+	DEF_SLOTFUNCTOR(CSignalslot,5)
+	DEF_SLOTFUNCTOR(CSignalslot,6)
+	DEF_SLOTFUNCTOR(CSignalslot,7)
+	DEF_SLOTFUNCTOR(CSignalslot,8)
 };
 
-
-namespace SampleCode1
+namespace SampleCode0
 {
 	using namespace simsigslot;
 
@@ -308,7 +306,7 @@ namespace SampleCode1
 	private:
 		CSignalslot1<int> m_EvtAction;
 		CSignalslot1<char*> m_EvtUI;
-		//CSignalslot2<int,char*> m_evtTest;
+		CSignalslot2<int,char*> m_evtTest;
 
 	protected:
 		static void OnEvent_Click(int nTimes)
@@ -320,9 +318,9 @@ namespace SampleCode1
 		{
 			printf("在%s函数内，显示信息为:%s\n", /*__FUNCTION__*/"OnEvent_Click2", szMsg);
 
-			//m_evtTest.emit(47987,"m_evtTest.emit：在OnEvent_Click2函数体呢\n");
-			////两者等价
-			//m_evtTest(47987,"m_evtTest：在OnEvent_Click2函数体呢\n");//通过重载caozuofu()来实现，在函数体内调用emit
+			m_evtTest.emit(47987,"m_evtTest.emit：在OnEvent_Click2函数体呢\n");
+			//两者等价
+			m_evtTest(47987,"m_evtTest：在OnEvent_Click2函数体呢\n");//通过重载caozuofu()来实现，在函数体内调用emit
 		}
 
 	public:
@@ -332,8 +330,8 @@ namespace SampleCode1
 			m_EvtUI.connectex(this,&CTest2::OnEvent_Click2);
 			m_EvtUI.disconnectex(this,&CTest2::OnEvent_Click2);
 			m_EvtUI.connectex(this,&CTest2::OnEvent_Click2);
-			//m_EvtAction.disconnectex(&CTest2::OnEvent_Click);
-			//m_evtTest.connectex(OnEvent_Test);
+			m_EvtAction.disconnectex(&CTest2::OnEvent_Click);
+			m_evtTest.connectex(OnEvent_Test);
 		}
 
 		void PrintText()
@@ -359,8 +357,9 @@ namespace SampleCode1
 		}
 	};
 
-	void main1()
+	void main0()
 	{
+		printf("SampleCode0::main0()\n");
 
 		CTest2 obj2;
 		CTest3 obj3;
@@ -369,6 +368,61 @@ namespace SampleCode1
 		obj2.PrintText();
 		getchar();
 	}
+};
+
+#include <iostream>
+namespace SampleCode1
+{
+	using namespace std;
+	using namespace simsigslot;
+	class CSwitch
+	{
+	public:
+		//signal0<> Clicked;//暂不支持无参数，递归宏不方便实现此类需求，还需要进一步改进
+		CSignalslot1<char*> Clicked;
+		CSignalslot1<int>Clicked1;
+	};
+
+	class CLight
+	{
+	public:
+		CLight(bool state){b_state = state;Displaystate();}
+		void ToggleState(char*){b_state = !b_state;Displaystate();} //作为消息的响应
+		void TurnOn(char*){b_state = TRUE;Displaystate();}
+		void TurnOff(char*){b_state = FALSE;Displaystate();}
+		void Displaystate(){cout<<"The state is "<<b_state<<endl;}
+	private:
+		bool b_state;
+	};
+
+	void main1()
+	{
+		printf("SampleCode1::main1()\n");		
+
+		CSwitch sw1, sw2,all_on,all_off;
+		CLight lp1(TRUE), lp2(FALSE);
+		sw1.Clicked.connectex(&lp1,&CLight::ToggleState); //绑定
+		sw2.Clicked.connectex(&lp2,&CLight::ToggleState);
+		all_on.Clicked.connectex(&lp1,&CLight::TurnOn);
+		all_on.Clicked.connectex(&lp2,&CLight::TurnOn);
+		all_off.Clicked.connectex(&lp1,&CLight::TurnOff);
+		all_off.Clicked.connectex(&lp2,&CLight::TurnOff);
+
+		sw1.Clicked("sw1.Clicked");
+		sw2.Clicked("sw2.Clicked");
+		all_on.Clicked("all_on.Clicked");
+		all_off.Clicked("all_off.Clicked");
+		sw1.Clicked1(5987);
+
+		sw1.Clicked.disconnectex(&lp1,&CLight::ToggleState);
+		sw2.Clicked.disconnectex(&lp2,&CLight::ToggleState);
+		all_on.Clicked.disconnectex(&lp1,&CLight::TurnOn);
+		all_on.Clicked.disconnectex(&lp2,&CLight::TurnOn);
+		all_off.Clicked.disconnectex(&lp1,&CLight::TurnOff);
+		all_off.Clicked.disconnectex(&lp2,&CLight::TurnOff);
+		getchar();
+	}
+
 };
 
 #include "sigslot.h"
@@ -398,6 +452,8 @@ namespace SampleCode2
 
 	void main2()
 	{
+		printf("SampleCode2::main2()\n");
+
 		CSwitch sw1, sw2,all_on,all_off;
 		CLight lp1(TRUE), lp2(FALSE);
 		sw1.Clicked.connect(&lp1,&CLight::ToggleState); //绑定
@@ -444,6 +500,7 @@ void EnableMemLeakCheck()
 void main()
 {
 	EnableMemLeakCheck();
+	SampleCode0::main0();
 	SampleCode1::main1();
 	SampleCode2::main2();
 }
